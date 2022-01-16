@@ -100,8 +100,30 @@ function updateDOM() {
       createItemEl(onHoldList, 0, onHoldItem, index);
    });
    // Run getSavedColumns only once, Update Local Storage
+   updatedOnLoad = true;
+   updateSavedColumns();
 }
 
+//Allows arrays to reflect drag and drop items
+const rebuildArrays = () => {
+   backlogListArray = [];
+   for (let i = 0; i < backlogList.children.length; i++) {
+      backlogListArray.push(backlogList.children[i].textContent);
+   }
+   progressListArray = [];
+   for (let i = 0; i < progressList.children.length; i++) {
+      progressListArray.push(progressList.children[i].textContent);
+   }
+   completeListArray = [];
+   for (let i = 0; i < completeList.children.length; i++) {
+      completeListArray.push(completeList.children[i].textContent);
+   }
+   onHoldListArray = [];
+   for (let i = 0; i < onHoldList.children.length; i++) {
+      onHoldListArray.push(onHoldList.children[i].textContent);
+   }
+   updateDOM();
+};
 //When Item Starts Dragging
 const drag = (e) => {
    draggedItem = e.target;
@@ -117,19 +139,20 @@ const allowDrop = (e) => {
 const dragEnter = (column) => {
    // console.log(listColumns[column]);
    listColumns[column].classList.add('over');
+   currentColumn = column;
 };
 
 //Drpping Item in Column
 const drop = (e) => {
    e.preventDefault();
-   //Remove background Color/ Padding
+   //Remove background Color/Padding
    listColumns.forEach((column) => {
       column.classList.remove('over');
-      currentColumn = column;
    });
    //Add Item to Column
    const parent = listColumns[currentColumn];
    parent.appendChild(draggedItem);
+   rebuildArrays();
 };
 //On Load
 updateDOM();
